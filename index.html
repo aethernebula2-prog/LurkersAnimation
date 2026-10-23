@@ -335,31 +335,61 @@ function drawBackground(g,c,t){
   }
   g.restore();
 }
-function drawWeapon(g, unit) {
+
+function drawWeapon(g, unit, t = manualTime) {
   if (!weaponVisible || !activeWeapon) return;
+
   const w = weaponPresets[activeWeapon];
   if (!w) return;
-  const pivotX = w.pivotX ?? w.gripX;
-  const pivotY = w.pivotY ?? w.gripY;
+
+  const arm = poseAt('leftArm', t);
+
+  // The hand position in the arm's local coordinate system
+  const pivotX = arm.pivotX ?? (arm.x + arm.w / 2);
+  const pivotY = arm.pivotY ?? arm.y;
+  const armAngle = (arm.angle || 0) * Math.PI / 180;
+
+  const localX = arm.x + arm.w / 2 - pivotX;
+  const localY = arm.y + arm.h - pivotY;
+
+  const handX =
+    pivotX +
+    localX * Math.cos(armAngle) -
+    localY * Math.sin(armAngle);
+
+  const handY =
+    pivotY +
+    localX * Math.sin(armAngle) +
+    localY * Math.cos(armAngle);
+
   g.save();
-  g.translate(
-    (w.x + pivotX) * unit,
-    (w.y + pivotY) * unit
-  );
+
+  // Follow the left arm's rotation
+  g.translate(handX * unit, handY * unit);
+  g.rotate(armAngle);
+
+  // Weapon position is relative to the hand
+  g.translate((w.x || 0) * unit, (w.y || 0) * unit);
   g.rotate((w.angle || 0) * Math.PI / 180);
+
+  const gripX = w.gripX ?? 0;
+  const gripY = w.gripY ?? 0;
+
   for (let y = 0; y < w.h; y++) {
     for (let x = 0; x < w.w; x++) {
       const color = w.art[y * w.w + x];
       if (!color) continue;
+
       g.fillStyle = color;
       g.fillRect(
-        (x - pivotX) * unit,
-        (y - pivotY) * unit,
+        (x - gripX) * unit,
+        (y - gripY) * unit,
         unit + 0.5,
         unit + 0.5
       );
     }
   }
+
   g.restore();
 }
 function drawTo(c, t, transparent=false){
@@ -369,7 +399,12 @@ function drawTo(c, t, transparent=false){
   g.save();
   g.translate(W/2,H*25/32);g.scale(characterScale,characterScale);g.translate(-W/2,-H*25/32);
   if($('mirror').checked){g.translate(W,0);g.scale(-1,1)}
-  for(const k of order){const p=poseAt(k,t);g.save();const px=p.x*unit,py=p.y*unit;const isBody=k==='body';
+  for (const k of order) {
+  if (k === 'weapon') {
+    drawWeapon(g, unit, t);
+    continue;
+  }
+  const p = poseAt(k, t);g.save();const px=p.x*unit,py=p.y*unit;const isBody=k==='body';
   const pivotX=(p.pivotX ?? (isBody?p.x:p.x+p.w/2))*unit;
   const pivotY=(p.pivotY ?? p.y)*unit;
   if(isBody){g.translate(px,py);g.rotate(p.angle*Math.PI/180)}else{g.translate(pivotX,pivotY);g.rotate(p.angle*Math.PI/180);g.translate((p.x+p.w/2-(p.pivotX ?? p.x+p.w/2))*unit,(p.y-(p.pivotY ?? p.y))*unit)}
