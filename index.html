@@ -109,13 +109,13 @@ input[type=range]{cursor:pointer}
 (()=> {
 const $=id=>document.getElementById(id);
 const defaults={
- rightLeg:{name:'Right Foot',w:3,h:3,x:16,y:16,angle:0,amp:24,freq:1.25,phase:Math.PI,color:'#ff784f',pivot:'top'},
- leftLeg:{name:'Left Foot',w:3,h:3,x:12,y:16,angle:0,amp:24,freq:1.25,phase:0,color:'#ffb443',pivot:'top'},
- rightArm:{name:'Right Arm (Behind Body)',w:2,h:4,x:18,y:13,angle:0,amp:28,freq:1.25,phase:Math.PI,color:'#18c9e8',pivot:'top'},
+ rightLeg:{name:'Right Foot',w:3,h:3,x:16,y:16,angle:0,amp:24,freq:2,phase:Math.PI,color:'#ff784f',pivot:'top'},
+ leftLeg:{name:'Left Foot',w:3,h:3,x:12,y:16,angle:0,amp:24,freq:2,phase:0,color:'#ffb443',pivot:'top'},
+ rightArm:{name:'Right Arm (Behind Body)',w:2,h:4,x:18,y:13,angle:0,amp:28,freq:2,phase:Math.PI,color:'#18c9e8',pivot:'top'},
  body:{name:'Body',w:7,h:10,x:12,y:7,angle:0,amp:0,freq:1,phase:0,color:'#3978ff',pivot:'top'},
- leftArm:{name:'Left Arm (Front)',w:2,h:4,x:11,y:13,angle:0,amp:28,freq:1.25,phase:0,color:'#18c9e8',pivot:'top'}
+ leftArm:{name:'Left Arm (Front)',w:2,h:4,x:11,y:13,angle:0,amp:28,freq:2,phase:0,color:'#18c9e8',pivot:'top'}
 };
-let parts=structuredClone(defaults),selected='leftArm',playing=false,raf=0,startStamp=0,elapsed=0,duration=.8,keys=[],manualTime=0;
+let parts=structuredClone(defaults),selected='leftArm',playing=false,raf=0,startStamp=0,elapsed=0,duration=1.0,keys=[],manualTime=0;
 let order=['rightLeg','leftLeg','rightArm','body','leftArm'];
 const defaultOrder=['rightLeg','leftLeg','rightArm','body','leftArm'];
 let characterScale=1,backgroundSpeed=80,backgroundMode='loop',backgroundScale=1,backgroundX=0,backgroundY=0,backgroundDataURL=null,backgroundImage=null;
