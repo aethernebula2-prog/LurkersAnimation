@@ -110,29 +110,58 @@ input[type=range]{cursor:pointer}
 const $=id=>document.getElementById(id);
 const pixelPalette={
  '.':null,
- 'D':'#2452B8FF', 'B':'#3978FFFF', 'L':'#6A9BFFFF', 'N':'#173B8DFF',
- 'C':'#77E3F2FF', 'T':'#18C9E8FF', 'S':'#087F9AFF',
- 'O':'#FF784FFF', 'o':'#D95839FF', 'Y':'#FFB443FF', 'y':'#D88A2BFF',
- 'H':'#FFFFFFFF', 'A':'#FFFFFF80', 'K':'#00000040'
+ 'L':'#FFFFFF00', 'U':'#605f64FF', 'R':'#454545FF', 'E':'#464447FF',
+ 'S':'#2A282BFF', 'K':'#3C3C3CFF', 's':'#601B0EFF', 'e':'#7f2118FF',
+ 'r':'#843123FF', 'v':'#641810FF', 
 };
-function pixelRows(rows){return rows.join('').split('').map(ch=>pixelPalette[ch]??null)}
+function pixelRows(rows) {
+  return rows.flatMap(row => {
+    if (Array.isArray(row)) {
+      return row.map(color => {
+        if (color == null || color === '.') return null;
+        return color;
+      });
+    }
+
+    return [...row].map(ch => pixelPalette[ch] ?? null);
+  });
+}
 const defaults={
- rightLeg:{name:'Right Foot',w:3,h:3,x:16,y:16,angle:0,amp:38,freq:2,phase:0,color:'#ff784f',pivot:'top',art:pixelRows(['OOO','OHO','ooO'])},
- leftLeg:{name:'Left Foot',w:3,h:3,x:12,y:16,angle:0,amp:38,freq:2,phase:Math.PI,color:'#ffb443',pivot:'top',art:pixelRows(['YYY','YHY','yyY'])},
- rightArm:{name:'Right Arm',w:2,h:4,x:18,y:13,angle:0,amp:32,freq:2,phase:Math.PI,color:'#18c9e8',pivot:'top',art:pixelRows(['ST','TL','ST','yo'])},
- body:{name:'Body',w:7,h:10,x:12,y:7,angle:0,amp:0,freq:1,phase:0,color:'#3978ff',pivot:'top',art:pixelRows([
-  'NNNNNNN',
-  'NBBBBBN',
-  'NBLBBBN',
-  'NBBBBBN',
-  'NBBCCBN',
-  'NBBCBBN',
-  'NBBBBBN',
-  'NDDDDDN',
-  'NBBBBBN',
-  'NNNNNNN'
+ rightLeg:{name:'Right Foot',w:3,h:3,x:16,y:17,angle:0,amp:38,freq:2,phase:0,color:'#ff784f',pivot:'top',art:pixelRows([
+  ["#38373cff", "#454545FF", "#615f62FF"],
+  ["#38373cFF", "#454545FF", "#5b4e50FF"],
+  ["#000002ff", "#201e1fFF", "#383a39FF"]
+])},
+ leftLeg:{name:'Left Foot',w:3,h:3,x:12,y:17,angle:0,amp:38,freq:2,phase:Math.PI,color:'#ffb443',pivot:'top',art:pixelRows([
+  ["#38373cff", "#454545FF", "#615f62FF"],
+  ["#38373cFF", "#454545FF", "#5b4e50FF"],
+  ["#000002ff", "#201e1fFF", "#383a39FF"]
  ])},
- leftArm:{name:'Left Arm',w:2,h:4,x:11,y:13,angle:0,amp:32,freq:2,phase:0,color:'#18c9e8',pivot:'top',art:pixelRows(['ST','TL','ST','yo'])}
+ rightArm:{name:'Right Arm',w:2,h:4,x:18,y:14,angle:0,amp:32,freq:2,phase:Math.PI,color:'#18c9e8',pivot:'top',art:pixelRows([
+  ["#473c42ff", "#5c4d51FF"],
+  ["#494041FF", "#55484aFF"],
+  ["#969696ff", "#aea9adFF"],
+  ["#797979ff", "#99979aFF"]
+ ])},
+ body:{name:'Body',w:7,h:11,x:12,y:7,angle:0,amp:0,freq:1,phase:0,color:'#3978ff',pivot:'top',art:pixelRows([
+  ["#babe0300", "#605f64FF", "#454545FF", "#3C3C3CFF", "#464447FF", "#615f62FF", "#292929FF"],
+  ["#691803FF", "#7d2217FF", "#872f23FF", "#66170fff", "#87301fFF", "#782418FF", "#843122FF"],
+  ["#3d150cff", "#9c7f62FF", "#231d25FF", "#c39973FF", "#ba9171FF", "#211e26FF", "#ad896cFF"],
+  ["#29282dff", "#3a3436FF", "#ac8c69FF", "#c79b7bFF", "#d7a983FF", "#b5906fFF", "#39333cFF"],
+  ["#5a5d5cff", "#292929FF", "#34322fFF", "#4e4c4dFF", "#51504eFF", "#312f30FF", "#28292aFF"],
+  ["#424146ff", "#383838FF", "#343434FF", "#343434FF", "#3f3f3fFF", "#383838FF", "#454545FF"],
+  ["#2d2729ff", "#464445FF", "#211b1bFF", "#2b2525FF", "#2e2a29FF", "#63595aFF", "#2c2827FF"],
+  ["#393738ff", "#454545FF", "#231a1bFF", "#333534FF", "#434645FF", "#685d5cFF", "#41424aFF"],
+  ["#38373cff", "#3f3f3fFF", "#454545FF", "#271a1cFF", "#6d615fFF", "#444643FF", "#41424aFF"],
+  ["#45444aff", "#383838FF", "#c6c6c6FF", "#434645FF", "#251b1aFF", "#333534FF", "#454545FF"],
+  ["#343339ff", "#bebebeFF", "#9e9c9dFF", "#c6c6c6FF", "#434645FF", "#261d1eFF", "#333534FF"]
+])},
+ leftArm:{name:'Left Arm',w:2,h:4,x:11,y:14,angle:0,amp:32,freq:2,phase:0,color:'#18c9e8',pivot:'top',art:pixelRows([
+  ["#473c42ff", "#5c4d51FF"],
+  ["#494041FF", "#55484aFF"],
+  ["#969696ff", "#aea9adFF"],
+  ["#797979ff", "#99979aFF"]
+])}
 };
 let parts=structuredClone(defaults),selected='leftArm',playing=false,raf=0,startStamp=0,elapsed=0,duration=1.0,keys=[],manualTime=0;
 let order=['rightLeg','leftLeg','rightArm','body','leftArm'];
