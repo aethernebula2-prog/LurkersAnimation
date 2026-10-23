@@ -221,24 +221,86 @@ const defaultOrder=['rightLeg','leftLeg','rightArm','body','leftArm', 'weapon'];
 let characterScale=1,backgroundSpeed=80,backgroundMode='loop',backgroundScale=1,backgroundX=0,backgroundY=0,backgroundDataURL=null,backgroundImage=null;
 let canvasDrag=null;
 const canvas=$('canvas'),ctx=canvas.getContext('2d');
-function renderLayerOrder(){
- const box=$('layerOrderList');if(!box)return;
- box.innerHTML=order.map((k,i)=>`<div class="layer-item" draggable="true" data-layer-item="${k}"><span class="layer-index">${i+1}</span><span class="layer-name" title="Drag to reorder">${parts[k].name}</span><button type="button" data-layer-up="${k}" aria-label="Move ${parts[k].name} backward" ${i===0?'disabled':''}>↑</button><button type="button" data-layer-down="${k}" aria-label="Move ${parts[k].name} forward" ${i===order.length-1?'disabled':''}>↓</button></div>`).join('');
- box.querySelectorAll('[data-layer-up]').forEach(b=>b.onclick=()=>moveLayer(b.dataset.layerUp,-1));
- box.querySelectorAll('[data-layer-down]').forEach(b=>b.onclick=()=>moveLayer(b.dataset.layerDown,1));
- let draggingKey=null;
- box.querySelectorAll('[data-layer-item]').forEach(item=>{
-   item.addEventListener('dragstart',e=>{draggingKey=item.dataset.layerItem;item.classList.add('layer-dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',draggingKey)});
-   item.addEventListener('dragend',()=>{draggingKey=null;box.querySelectorAll('.layer-item').forEach(el=>el.classList.remove('layer-dragging','layer-drop-target'))});
-   item.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='move';item.classList.add('layer-drop-target')});
-   item.addEventListener('dragleave',()=>item.classList.remove('layer-drop-target'));
-   item.addEventListener('drop',e=>{e.preventDefault();item.classList.remove('layer-drop-target');const from=order.indexOf(draggingKey||e.dataTransfer.getData('text/plain')),to=order.indexOf(item.dataset.layerItem);if(from<0||to<0||from===to)return;const [moved]=order.splice(from,1);order.splice(to,0,moved);buildFields();draw()});
- });
+
+function renderLayerOrder() {
+  const box = $('layerOrderList');
+  if (!box) return;
+  box.innerHTML = order.map((k, i) => {
+    const name = k === 'weapon' ? 'Weapon' : parts[k].name;
+    return `
+      <div class="layer-item" draggable="true"
+           data-layer-item="${k}">
+        <span class="layer-index">${i + 1}</span>
+        <span class="layer-name" title="Drag to reorder">${name}</span>
+        <button type="button" data-layer-up="${k}"
+          aria-label="Move ${name} backward"
+          ${i === 0 ? 'disabled' : ''}>↑</button>
+        <button type="button" data-layer-down="${k}"
+          aria-label="Move ${name} forward"
+          ${i === order.length - 1 ? 'disabled' : ''}>↓</button>
+      </div>`;
+  }).join('');
+  box.querySelectorAll('[data-layer-up]').forEach(
+    b => b.onclick = () => moveLayer(b.dataset.layerUp, -1)
+  );
+  box.querySelectorAll('[data-layer-down]').forEach(
+    b => b.onclick = () => moveLayer(b.dataset.layerDown, 1)
+  );
+  let draggingKey = null;
+  box.querySelectorAll('[data-layer-item]').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      draggingKey = item.dataset.layerItem;
+      item.classList.add('layer-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', draggingKey);
+    });
+    item.addEventListener('dragend', () => {
+      draggingKey = null;
+      box.querySelectorAll('.layer-item').forEach(el =>
+        el.classList.remove('layer-dragging', 'layer-drop-target')
+      );
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      item.classList.add('layer-drop-target');
+    });
+
+    item.addEventListener('dragleave', () =>
+      item.classList.remove('layer-drop-target')
+    );
+
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('layer-drop-target');
+
+      const from = order.indexOf(
+        draggingKey || e.dataTransfer.getData('text/plain')
+      );
+      const to = order.indexOf(item.dataset.layerItem);
+
+      if (from < 0 || to < 0 || from === to) return;
+
+      const [moved] = order.splice(from, 1);
+      order.splice(to, 0, moved);
+      buildFields();
+      draw();
+    });
+  });
 }
 function moveLayer(k,delta){const i=order.indexOf(k),j=i+delta;if(j<0||j>=order.length)return;[order[i],order[j]]=[order[j],order[i]];buildFields();draw();}
 function buildFields(){
  renderLayerOrder();
- $('parts').innerHTML=order.map(k=>`<div class="partrow ${k===selected?'selected':''}" data-part="${k}"><div><div class="partname">${parts[k].name}</div><div class="small">${parts[k].w} × ${parts[k].h} cells</div></div><span class="badge">${order.indexOf(k)+1} layer</span></div>`).join('');
+ const bodyPartOrder = order.filter(k => k !== 'weapon');
+  $('parts').innerHTML = bodyPartOrder.map(k =>
+    `<div class="partrow ${k===selected?'selected':''}" data-part="${k}">
+      <div>
+        <div class="partname">${parts[k].name}</div>
+        <div class="small">${parts[k].w} × ${parts[k].h} cells</div>
+      </div>
+      <span class="badge">${order.indexOf(k)+1} layer</span>
+    </div>`
+  ).join('');
  document.querySelectorAll('[data-part]').forEach(el=>el.onclick=()=>{selected=el.dataset.part;buildFields();$('drawColor').value=parts[selected].color;syncColorFields(parts[selected].color);updateAlphaUI();renderPartCanvas();});
  const p=parts[selected];
  $('baseFields').innerHTML=field('Position X','x',p.x,.01)+field('Position Y','y',p.y,.01)+field('Width (cells)','width',p.w,1)+field('Height (cells)','height',p.h,1)+field('Angle °','angle',p.angle,.01)+field('Pivot X','pivotX',p.pivotX ?? (p.x+p.w/2),.01)+field('Pivot Y','pivotY',p.pivotY ?? p.y,.01)+`<div><label>Color</label><input type="color" id="f_color" value="${p.color}"></div>`;
