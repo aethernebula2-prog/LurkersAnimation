@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PixelMotion — Layered Character Animator</title>
+<title>Lurkers Animator</title>
 <style>
 .scene-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.scene-controls>div{min-width:0}.scene-controls input[type=number]{width:100%;min-width:0;background:#fff;color:var(--text);border:1px solid #d9e1ed;border-radius:9px;padding:9px 10px}.scene-controls input[type=range]{width:100%;accent-color:var(--blue)}.scene-controls input[type=number]{font-variant-numeric:tabular-nums}.scene-controls .wide{grid-column:1/-1}.drag-hint{margin-top:6px}.stage canvas{touch-action:none;cursor:grab}.stage canvas.dragging{cursor:grabbing}.scene-file{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.scene-file button{flex:1}.layer-order{display:flex;flex-direction:column;gap:6px;margin-top:10px}.layer-item{display:grid;grid-template-columns:26px minmax(0,1fr) 34px 34px;gap:6px;align-items:center;border:1px solid #e1e7f0;border-radius:10px;padding:6px 8px;background:#fff}.layer-index{display:grid;place-items:center;width:24px;height:24px;border-radius:7px;background:#edf2ff;color:#315de8;font-size:12px;font-weight:700}.layer-name{font-size:13px;font-weight:600}.layer-item button{padding:5px 0;min-width:30px}.layer-item button:disabled{opacity:.35;cursor:not-allowed}.layer-item{cursor:grab}.layer-item .layer-name{cursor:grab}.layer-item.layer-dragging{opacity:.45}.layer-item.layer-drop-target{border-color:#3867f5;background:#edf2ff}
 
@@ -74,7 +74,7 @@ input[type=range]{cursor:pointer}
 @media(max-width:680px){header{padding:17px 12px}.wrap{padding:0 9px 15px}.layout{grid-template-columns:1fr}.layout>section:last-child{grid-column:auto;display:flex;flex-direction:column}.fields{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{padding:13px;border-radius:13px}}
 </style></head>
 <body>
-<header><div><h1>PixelMotion Animator</h1><div class="sub">Layered pixel character animation · Precise control over position, rotation, speed, and layers</div></div><div class="top"><button id="reset">Reset Character</button><button id="save">Export Project JSON</button><button id="load">Import Project</button><input id="file" type="file" accept=".json" hidden></div></header>
+<header><div><h1>Lurkers Animator</h1><div class="sub">by AethericNebula</div></div><div class="top"><button id="reset">Reset Character</button><button id="save">Export Project JSON</button><button id="load">Import Project</button><input id="file" type="file" accept=".json" hidden></div></header>
 <div class="wrap">
 <div class="panel" style="margin-bottom:12px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><b>Animation Setup</b><div class="small">Body 7×10 · Arms 2×4 each · Feet 3×3 each. Limbs rotate around their pivots; customize the layer order below.</div></div><div class="top"><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="grid" checked> Show Grid in Part Editor</label><label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="mirror"> Face Left (Mirror Horizontally)</label></div></div>
 <div class="layout">
