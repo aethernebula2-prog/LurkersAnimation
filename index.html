@@ -108,8 +108,6 @@ input[type=range]{cursor:pointer}
 <script>
 (()=> {
 const $=id=>document.getElementById(id);
-// Per-pixel default skin. Keep every original part's dimensions, coordinates,
-// pivots, and animation values unchanged. Colors use #RRGGBBAA (RGBA hex).
 const pixelPalette={
  '.':null,
  'D':'#2452B8FF', 'B':'#3978FFFF', 'L':'#6A9BFFFF', 'N':'#173B8DFF',
@@ -182,8 +180,6 @@ function drawBackground(g,c,t){
   else if(backgroundMode==='bounce'&&backgroundSpeed!==0){const range=Math.max(0,tw-W),cycle=range*2;let q=cycle?((t*Math.abs(backgroundSpeed)*ratio)%cycle):0;offset=q<=range?q:cycle-q;if(backgroundSpeed<0)offset=range-offset;}
   if(backgroundMode==='static')offset=0;
   const bx=backgroundX*ratio,by=backgroundY*ratio,drawY=(H-th)/2+by;
-  // Mirror the background independently with the character. This also reverses
-  // the apparent scroll direction when Face Left is enabled.
   g.save();
   if($('mirror').checked){g.translate(W,0);g.scale(-1,1)}
   if(backgroundMode==='loop'){
@@ -200,21 +196,16 @@ function drawTo(c, t, transparent=false){
   const g=c.getContext('2d'),W=c.width,H=c.height,unit=Math.min(W,H)/32;
   g.clearRect(0,0,W,H);
   drawBackground(g,c,t);
-  // Grid is intentionally restricted to the selected-part drawing editor; never render it on the assembled scene or exported frames.
   g.save();
-  // Scale the entire character around its bottom-center anchor so its feet stay near the ground.
   g.translate(W/2,H*25/32);g.scale(characterScale,characterScale);g.translate(-W/2,-H*25/32);
   if($('mirror').checked){g.translate(W,0);g.scale(-1,1)}
   for(const k of order){const p=poseAt(k,t);g.save();const px=p.x*unit,py=p.y*unit;const isBody=k==='body';
   const pivotX=(p.pivotX ?? (isBody?p.x:p.x+p.w/2))*unit;
   const pivotY=(p.pivotY ?? p.y)*unit;
-  // Position X/Y defines the part's top-left for body; for limbs it defines the top-edge center.
-  // A custom pivot is independent, so it can be moved anywhere on or outside the part.
   if(isBody){g.translate(px,py);g.rotate(p.angle*Math.PI/180)}else{g.translate(pivotX,pivotY);g.rotate(p.angle*Math.PI/180);g.translate((p.x+p.w/2-(p.pivotX ?? p.x+p.w/2))*unit,(p.y-(p.pivotY ?? p.y))*unit)}
   g.fillStyle=p.color;
   const art=p.art||Array(p.w*p.h).fill(p.color);
   for(let yy=0;yy<p.h;yy++)for(let xx=0;xx<p.w;xx++){const col=art[yy*p.w+xx];if(col){g.fillStyle=col;const cellX=(isBody?xx:xx-p.w/2)*unit,cellY=yy*unit;const bleed=0.5/Math.max(characterScale,0.01);g.fillRect(cellX-bleed,cellY-bleed,unit+2*bleed,unit+2*bleed)}}
-  // No selection outline on the assembled scene: it can look like a grid when dragging.
   g.restore()}
   g.restore();
 }
