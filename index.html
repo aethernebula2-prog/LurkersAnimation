@@ -364,12 +364,13 @@ function drawWeapon(g, unit, t = manualTime) {
 
   g.save();
 
-  // Follow the left arm's rotation
   g.translate(handX * unit, handY * unit);
   g.rotate(armAngle);
 
-  // Weapon position is relative to the hand
-  g.translate((w.x || 0) * unit, (w.y || 0) * unit);
+  g.translate(
+    ((w.x || 0) - 19) * unit,
+    ((w.y || 0) - 15) * unit
+  );
   g.rotate((w.angle || 0) * Math.PI / 180);
 
   const gripX = w.gripX ?? 0;
